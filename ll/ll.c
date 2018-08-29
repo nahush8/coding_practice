@@ -105,8 +105,21 @@ Node* findMid(Node *head)
 	return ptr1;
 }
 
-Node* merge(Node *a, Node *b){
-
+void merge(Node *left, Node *right)
+{
+	Node *curr = NULL;
+	if (left->value <= right->value)
+	{
+		curr->next = right;
+		left = left->next;
+		curr = curr->next;
+	}
+	else
+	{
+		curr->next = left;
+		right = right->next;
+		curr = curr->next;
+	}
 }
 
 void mergeSort(Node *head, int len)
@@ -124,7 +137,7 @@ void mergeSort(Node *head, int len)
 	curr->next = NULL;
 	mergeSort(head,l1);
 	mergeSort(curr,l2);
-	head = merge(head,curr);
+	merge(head,curr);
 
 }
 
