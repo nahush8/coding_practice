@@ -105,26 +105,41 @@ Node* findMid(Node *head)
 	return ptr1;
 }
 
-void merge(Node *left, Node *right)
+Node* merge(Node *left, Node *right)
 {
-	Node *curr = NULL;
+	Node *curr = left->value <= right->value ? left : right;
+	Node * result = curr;
+	if (left->value <= right->value)
+		left = left->next;
+	else
+		right = right->next;
+
+	if(NULL == left){
+		curr->next = right;
+		return result;
+	}
+	else if(NULL == right){
+		curr->next = left;
+		return result;
+	}
+
 	if (left->value <= right->value)
 	{
-		curr->next = right;
-		left = left->next;
+		curr->next = left;
+		left= left->next;
 		curr = curr->next;
 	}
 	else
 	{
-		curr->next = left;
+		curr->next = right;
 		right = right->next;
 		curr = curr->next;
 	}
+	return result;
 }
 
 void mergeSort(Node *head, int len)
 {
-	if (head == NULL || head->next == NULL) return;
 	Node *curr = head;
 	int l1 = len/2;
 	int l2 = len - len/2;
@@ -134,10 +149,14 @@ void mergeSort(Node *head, int len)
 		curr = curr->next;
 		itr++;
 	}
-	curr->next = NULL;
+	if(NULL != curr)
+		curr->next = NULL;
 	mergeSort(head,l1);
 	mergeSort(curr,l2);
-	merge(head,curr);
+	Node* result = merge(head,curr);
+	printList(result);
+
+	
 
 }
 
@@ -158,6 +177,5 @@ int main()
 	//Node *mid = findMid(head);
 	//printf("\nMidpoint is: %d\n",mid->value);
 	mergeSort(head,getLength(head));
-	printList(head);
 return 0;
 }
