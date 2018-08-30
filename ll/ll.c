@@ -94,69 +94,93 @@ void bubbleSort(Node *head)
 	printList(head);
 }
 
-Node* findMid(Node *head)
+void findMid(Node *head, Node** front, Node** back)
 {
-	Node *ptr1 = head, *ptr2=head;
-		while((ptr2 != NULL) && (ptr2->next != NULL))
+	Node *ptr1 = head, *ptr2=head->next;
+		while(ptr2 != NULL)
 		{
-			ptr1 = ptr1->next;
-			ptr2 = ptr2->next->next;
+			ptr2 = ptr2->next;
+			if(ptr2 != NULL)
+			{
+				ptr1 = ptr1->next;
+				ptr2 = ptr2->next;
+			}
 		}
-	return ptr1;
+	*front = head;
+	*back = ptr1->next;
+	ptr1->next = NULL;
 }
 
-Node* merge(Node *left, Node *right)
+// Node* merge(Node *left, Node *right)
+// {
+// 	Node *curr = left->value <= right->value ? left : right;
+// 	Node * result = curr;
+// 	if (left->value <= right->value)
+// 		left = left->next;
+// 	else
+// 		right = right->next;
+
+// 	if(NULL == left){
+// 		curr->next = right;
+// 		return result;
+// 	}
+// 	else if(NULL == right){
+// 		curr->next = left;
+// 		return result;
+// 	}
+
+// 	if (left->value <= right->value)
+// 	{
+// 		curr->next = left;
+// 		left= left->next;
+// 		curr = curr->next;
+// 	}
+// 	else
+// 	{
+// 		curr->next = right;
+// 		right = right->next;
+// 		curr = curr->next;
+// 	}
+// 	return result;
+
+// }
+
+Node* merge(Node* left, Node* right)
 {
-	Node *curr = left->value <= right->value ? left : right;
-	Node * result = curr;
-	if (left->value <= right->value)
-		left = left->next;
-	else
-		right = right->next;
+	Node *result = NULL;
+	if(NULL == left)
+		return right;
+	if(NULL == right)
+		return left;
 
-	if(NULL == left){
-		curr->next = right;
-		return result;
-	}
-	else if(NULL == right){
-		curr->next = left;
-		return result;
-	}
-
-	if (left->value <= right->value)
+	if(left->value <= right->value)
 	{
-		curr->next = left;
-		left= left->next;
-		curr = curr->next;
+		result = left;
+		result->next = merge(left->next,right);
 	}
 	else
 	{
-		curr->next = right;
-		right = right->next;
-		curr = curr->next;
+		result = right;
+		result->next = merge(left,right->next);
 	}
 	return result;
 }
 
-void mergeSort(Node *head, int len)
+void mergeSort(Node **headRef)
 {
-	Node *curr = head;
-	int l1 = len/2;
-	int l2 = len - len/2;
-	int itr = 0, i = 0;
-	while(itr < l1)
-	{
-		curr = curr->next;
-		itr++;
-	}
-	if(NULL != curr)
-		curr->next = NULL;
-	mergeSort(head,l1);
-	mergeSort(curr,l2);
-	Node* result = merge(head,curr);
-	printList(result);
+	Node *head = *headRef;
+	Node *frontRef, *backRef;
+	if((NULL == head) || (NULL == head->next)) 
+		return;
 
-	
+	findMid(head, &frontRef, &backRef);
+ 	//printList(frontRef);
+ 	//printList(backRef);
+	mergeSort(&frontRef);
+	mergeSort(&backRef);
+
+	*headRef = merge(frontRef,backRef);
+	//printList(result);
 
 }
 
@@ -173,9 +197,9 @@ int main()
 	printf("\n");
 	printList(head);
 	//bubbleSort(head);
-	Node *curr = head;
 	//Node *mid = findMid(head);
 	//printf("\nMidpoint is: %d\n",mid->value);
-	mergeSort(head,getLength(head));
+	mergeSort(&head);
+	printList(head);
 return 0;
 }
