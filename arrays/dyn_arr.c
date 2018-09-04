@@ -193,6 +193,22 @@ void print_stats(vector *v)
 	printf("=====================================\n\n");
 }
 
+bool find(vector *v, int value)
+{
+	int i = 0 ;
+	for(i = 0 ; i < v->size ; i++)
+	{
+		if(value == *(v->ptr + i))
+		{
+			printf("\nValue found at index: [%d]\n",i);
+			return true;
+		}
+	}
+	printf("\n Sorry! Value not found.\n");
+	return false;
+
+}
+
 int main()
 {
 	vector v;
@@ -231,6 +247,7 @@ int main()
 	
 	
 	print_stats(&v);
+	find(&v, 500);
 
 	return 0;
 }
