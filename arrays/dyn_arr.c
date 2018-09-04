@@ -145,6 +145,35 @@ bool insert(vector *v, int index, int value)
 	return true;
 }
 
+bool delete(vector *v, int index )
+{
+	if((0 > index) || (v->size < index))
+	{
+		printf("\n Index cannot be less than 0 or more than the last stored index. Exiting ..\n");
+		exit(EXIT_FAILURE);
+	}
+
+		// Inserting at the end
+	if(index == v->size)
+	{
+		pop(v);
+		return true;
+	}
+
+	if(!is_empty(v))
+	{
+		int i;
+		for(i = index+1 ; i < v->size ; i++)
+		{
+			*(v->ptr + i - 1) = *(v->ptr + i);
+		}
+		v->size--;
+		return true;
+	}
+	else
+		return false;
+}
+
 void print_elements(vector *v)
 {
 	int i;
@@ -153,6 +182,15 @@ void print_elements(vector *v)
 		printf("\nElement at %d is : [%d]\n",i ,at(v, i));
 	}
 
+}
+
+void print_stats(vector *v)
+{
+	printf("====================================\n");
+	print_elements(v);
+	printf("\nSize is : [%d]\n", get_size(v));
+	printf("\ncapacity is : [%d]\n", get_capacity(v));
+	printf("=====================================\n\n");
 }
 
 int main()
@@ -168,10 +206,7 @@ int main()
 	}	
 	push_back(&v,10);
 
-	print_elements(&v);
-
-	printf("\nSize is : [%d]\n", get_size(&v));
-	printf("\ncapacity is : [%d]\n", get_capacity(&v));
+	print_stats(&v);
 	/*
 	for(i = 0 ; i < 10 ; i++)
 	{
@@ -181,7 +216,21 @@ int main()
 	printf("\nSize is : [%d]\n", get_size(&v));
 	printf("\ncapacity is : [%d]\n", get_capacity(&v));
 	*/
-	insert(&v, v.size, 200);
-	print_elements(&v);
+	insert(&v, 3, 200);
+	insert(&v, 8, 250);
+	insert(&v, 10, 400);
+	insert(&v, v.size, 500);
+
+	print_stats(&v);
+
+	delete(&v, 5);
+	delete(&v, 2);
+	delete(&v, 1);
+	delete(&v, 4);
+	delete(&v, 0);
+	
+	
+	print_stats(&v);
+
 	return 0;
 }
