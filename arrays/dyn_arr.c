@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 
-#define INITIAL_VECTOR_CAPACITY 10
+#define INITIAL_VECTOR_CAPACITY 20
 
 typedef struct VECTOR
 {
@@ -60,9 +60,9 @@ int at(vector *v, int index)
 
 bool resize(vector *v, bool flag)
 {
-	if(0 == flag)
+	if(0 == flag)   // Doubling the capacity
 		v->ptr = (int*)realloc(v->ptr, v->capacity * 2 * sizeof(int));
-	else if(1 == flag)
+	else if(1 == flag) // Half capacity
 		v->ptr = (int*)realloc(v->ptr, v->capacity / 2 * sizeof(int));
 		
 
@@ -106,6 +106,54 @@ int pop(vector *v)
 	return *(v->ptr + --v->size);
 }
 
+bool insert(vector *v, int index, int value)
+{
+	if((0 > index) || (v->size < index))
+	{
+		printf("\n Index cannot be less than 0 or more than the last stored index. Exiting ..\n");
+		exit(EXIT_FAILURE);
+	}
+
+		// Inserting at the end
+	if(index == v->size)
+	{
+		push_back(v, value);
+		return true;
+	}
+
+
+	// Inserting at the beginning or middle
+	v->size++;
+	if(is_full(v))
+	{
+		bool rtn = resize(v, 0);
+		if(false == rtn)
+		{
+			printf("\nNot enough memory. Exiting ..\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+	v->size--;
+	int i;
+	for(i = v->size -1 ; i >= index ; i--)
+	{
+		*(v->ptr + i + 1) = *(v->ptr + i);
+	}
+
+	*(v->ptr + index) = value;
+	v->size++;
+	return true;
+}
+
+void print_elements(vector *v)
+{
+	int i;
+	for(i = 0 ; i < v->size ; i++)
+	{
+		printf("\nElement at %d is : [%d]\n",i ,at(v, i));
+	}
+
+}
 
 int main()
 {
@@ -117,15 +165,14 @@ int main()
 	for(i = 0 ; i < 10 ; i++)
 	{
 		push_back(&v,i);
-		printf("\nElement at %d is : [%d]\n",i ,at(&v, i));
-	}
-
+	}	
 	push_back(&v,10);
 
-	printf("\nElement at %d is : [%d]\n",i ,at(&v, 10));
+	print_elements(&v);
+
 	printf("\nSize is : [%d]\n", get_size(&v));
 	printf("\ncapacity is : [%d]\n", get_capacity(&v));
-
+	/*
 	for(i = 0 ; i < 10 ; i++)
 	{
 		printf("\nElement popped: %d\n", pop(&v));
@@ -133,6 +180,8 @@ int main()
 	printf("\nLAST popped element:%d\n" , pop(&v));
 	printf("\nSize is : [%d]\n", get_size(&v));
 	printf("\ncapacity is : [%d]\n", get_capacity(&v));
-
+	*/
+	insert(&v, v.size, 200);
+	print_elements(&v);
 	return 0;
 }
