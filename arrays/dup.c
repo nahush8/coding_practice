@@ -19,18 +19,53 @@ int duplicate(int *ptr, int l)
 	return sum_of_all - n_sum;
 }
 
+void swap(int *a, int *b)
+{
+	int temp;
+	temp  = *a;
+	*a = *b;
+	*b = temp;
+}
+
 // N numbers ranging from 0 to n-1. It is not clear how many numbers 
 // are duplicated or how many times a number gets duplicated
 
 int unknown_duplicates(int *ptr, int l)
 {
-	return 0;
+	int i;
+	for(i = 0 ; i < l ; i++)
+	{
+		if(*(ptr + i) < 0 || *(ptr + i) > (l - 1))
+		{
+			printf("\n Invalid numbers.\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	for(i = 0 ; i < l ; i++)
+	{
+
+		while(*(ptr + i) != i)
+		{
+			if(*(ptr + i) == *(ptr + *(ptr + i)))
+				return *(ptr + i);	
+				
+			swap((ptr+i),(ptr+*(ptr+i)));	
+		}
+
+	}
+	printf("\nNO Duplicates\n");
+	exit(EXIT_FAILURE);
 }
 
 int main(void)
 {
-	int data[] = {0,1,2,3,4,5,5};
+	int data[] = {2,3,1,0,5,5,4,4,6};
+	//int data[] = {0,0};
+	//int data[] = {2,3,1,0,5,5,4,4,19};
+	//int data[] = {2,3,1,0,5,6};
+
 	int length = sizeof(data)/sizeof(data[0]);
-	printf("\nDuplicate number is: %d\n", duplicate(data, length));
+	printf("\nDuplicate number is: %d\n", unknown_duplicates(data, length));
 	return 0;
 }
