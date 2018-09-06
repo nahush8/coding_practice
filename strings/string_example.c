@@ -31,7 +31,7 @@ char* replace_blanks(char *str)
 
 // String replacement without extra space
 
-char* string_replacement(char *str)
+char* string_replacement(char *str, int DELTA)
 {
 	char *temp = str;
 	int numOfBlanks = 0;
@@ -42,15 +42,41 @@ char* string_replacement(char *str)
 			++numOfBlanks;
 		temp++;
 	}
+	char *newStr = str;
+	newStr += strlen(str) + numOfBlanks * DELTA;
+
+	while(temp != str)
+	{
+		if(*temp == ' ')
+		{
+			*(newStr--) = '0';
+			*(newStr--) = '2';
+			*(newStr--) = '%';
+		}
+		else
+		{
+			*(newStr--) = *temp;
+		}
+		temp--;
+
+	}
+
+	if(*temp == ' ')
+		{
+			*(newStr--) = '0';
+			*(newStr--) = '2';
+			*(newStr--) = '%';
+		}
 	printf("\nNumber of Blanks: %d\n", numOfBlanks);
 	return str;
+		
 }
 
 int main(void)
 {
 char str[100];
-strcpy(str, "We are happy");
+strcpy(str, "Program works.");
 printf("\nString before Replacement: %s\n",str);
-printf("\nString After Replacement: %s\n",string_replacement(str));
+printf("\nString After Replacement: %s\n",string_replacement(str, 2));
 	return 0;
 }
