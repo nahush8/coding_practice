@@ -340,6 +340,73 @@ void reverse(node **head)
 	}
 }
 
+void bubbleSort(node *head)
+{
+	if(isEmpty(head))
+	{
+		printf("\nList is empty\n");
+		exit(EXIT_FAILURE);
+	}
+
+	node *curr = head;
+	int temp, length = 0, itr = 0;
+	length = size(head);
+	curr = head;
+	while(0 < length)
+	{
+		while(itr < length - 1)
+		{
+			if(curr->data > curr->next->data)
+			{
+				temp = curr->data;
+				curr->data = curr->next->data;
+				curr->next->data = temp;
+			}
+			curr = curr->next;
+			itr++;
+		}
+		itr = 0;
+		length--;
+		curr = head;
+	}
+	
+}
+
+// Returns -999 as index if not found
+int binarySearch(node *head, int value, int low, int high)
+{
+	int mid = (low + high) >> 1;
+
+	while(low <= high)
+	{
+		if(value == valueAt(head, mid))
+			return mid;
+		if(valueAt(head, mid) <= value)
+		{
+			low = mid + 1;
+		}
+		else
+		{ 
+			high = mid - 1;
+		}
+	}
+	return -999;
+}
+
+void remove_value(node **head, int value)
+{
+	if(isEmpty(*head))
+	{
+		printf("\nList is empty\n");
+		exit(EXIT_FAILURE);
+	}
+	printf("\nSorting the list first\n");
+	bubbleSort(*head);
+	printf("\nDoing a binary search\n");
+	int index = binarySearch(*head, value, 0, size(*head) - 1);
+	printf("\nValue found at: %d\n", index);
+}
+
 int main(void)
 {
 	node *head = NULL;
@@ -356,7 +423,6 @@ int main(void)
 	push_back(&head, -20);
 	printList(head);
 	assert(size(head) == 2);
-
 	push_back(&head, 30);
 	printList(head);
 	assert(size(head) == 3);
@@ -383,7 +449,7 @@ int main(void)
 
 	reverse(&head);
 	printList(head);
-
+	remove_value(&head, 20);
 	// assert(pop_front(&head) == -20);
 	// printList(head);
 	// assert(size(head) == 2);
