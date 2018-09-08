@@ -48,7 +48,7 @@ typedef struct Node
 
 bool isEmpty(node *head)
 {
-	if(head == NULL)
+	if(NULL == head)
 	{
 		return true;
 	}
@@ -67,7 +67,7 @@ node* allocate()
 node* goToEnd(node *head)
 {
 	node *itr = head;
-	while(itr->next != NULL)
+	while(NULL != itr->next) 
 	{
 		itr = itr->next;
 	}
@@ -76,7 +76,7 @@ node* goToEnd(node *head)
 void push_back(node **head, int value)
 {
 	// This is the first time call. Create head.
-	if(*head == NULL)
+	if(NULL == *head)
 	{
 		*head = allocate();
 		(*head)->next = NULL;
@@ -89,6 +89,70 @@ void push_back(node **head, int value)
 		itr->next = temp;
 		temp->data = value;
 		temp->next = NULL;
+	}
+}
+
+int pop_back(node *head)
+{
+	int retval;
+	if(NULL == head->next)
+	{
+		retval = head->data;
+		printf("\nPopping out last element.\n");
+		printf("\nElement is: %d\n",retval);
+		free(head);
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		node *itr = head;
+		while(NULL != itr->next->next)
+		{
+			itr = itr->next;
+		}
+		retval = itr->next->data;
+		free(itr->next);
+		itr->next = NULL;
+		return retval;
+	}
+}
+
+int pop_front(node **head)
+{
+	int retval;
+	if((*head)->next == NULL)
+	{
+		retval = (*head)->data;
+		printf("\nPopping out last element.\n");
+		printf("\nElement is: %d\n",retval);
+		free(*head);
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		node *itr = (*head)->next;
+		retval = (*head)->data;
+		free(*head);
+		*head = itr;
+		return retval;
+	}
+}
+
+void push_front(node **head, int value)
+{
+	// This is the first time call. Create head.
+	if(NULL == *head)
+	{
+		*head = allocate();
+		(*head)->next = NULL;
+		(*head)->data = value;
+	}
+	else  // List already exits, travel to the last node and add the new node.
+	{
+		node *temp = allocate();
+		temp->next = *head;
+		temp->data = value;
+		*head = temp;
 	}
 }
 
@@ -153,32 +217,90 @@ int main(void)
 	node *head = NULL;
 
 	assert(isEmpty(head) == true);
+	//push_front(&head, 999);
+
 	push_back(&head, 10);
 	printList(head);
 	assert(size(head) == 1);
 	assert(isEmpty(head) == false);
+	// assert(isEmpty(head) == false);
 
 	push_back(&head, -20);
 	printList(head);
 	assert(size(head) == 2);
-	assert(isEmpty(head) == false);
 
 	push_back(&head, 30);
 	printList(head);
 	assert(size(head) == 3);
-	assert(isEmpty(head) == false);
 
 	push_back(&head, -350);
 	printList(head);
 	assert(size(head) == 4);
-	assert(isEmpty(head) == false);
 
-	assert(valueAt(head,0) == 10);
-	assert(valueAt(head,1) == -20);
-	assert(valueAt(head,2) == 30);
-	assert(valueAt(head,3) == -350);
-	//assert(valueAt(head,-12) == 10);
-	assert(valueAt(head,0) == 10);
 
+	// assert(pop_front(&head) == 10);
+	// printList(head);
+	// assert(size(head) == 3);
+
+	// assert(pop_front(&head) == -20);
+	// printList(head);
+	// assert(size(head) == 2);
+
+	// assert(pop_front(&head) == 30);
+	// printList(head);
+	// assert(size(head) == 1);
+
+	// assert(pop_front(&head) == -350);
+	// printList(head);
+	// assert(size(head) == 0);
+
+	// // assert(valueAt(head,0) == 999);
+	// // assert(valueAt(head,1) == -20);
+	// // assert(valueAt(head,2) == 30);
+	// // assert(valueAt(head,3) == -350);
+	// //assert(valueAt(head,-12) == 10);
+	// //assert(valueAt(head,8) == 10);
+
+	// push_back(&head, -100);
+	// printList(head);
+	// assert(size(head) == 5);
+
+	// push_back(&head, 35);
+	// printList(head);
+	// assert(size(head) == 6);
+
+	// push_back(&head, 32);
+	// printList(head);
+	// assert(size(head) == 7);
+
+	// push_back(&head, 43);
+	// printList(head);
+	// assert(size(head) == 8);
+
+	// push_front(&head, 800);
+	// 	printList(head);
+	// 	assert(size(head) == 9);
+	// push_front(&head, 999);
+	// 	printList(head);
+	// 	assert(size(head) == 10);
+
+	// assert(pop_back(head) == -350);
+	// printList(head);
+	// assert(size(head) == 3);
+
+
+	// assert(pop_back(head) == 30);
+	// printList(head);
+	// assert(size(head) == 2);
+
+
+	// assert(pop_back(head) == -20);
+	// printList(head);
+	// assert(size(head) == 1);
+
+
+	// assert(pop_back(head) == 10);
+	// printList(head);
+	// assert(size(head) == 0);
 	return 0;	
 }
