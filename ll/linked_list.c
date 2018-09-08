@@ -189,7 +189,7 @@ void printList(node *head)
 
 int valueAt(node *head, int index)
 {
-	if(index < 0 || index >= size(head))
+	if(0 > index || size(head) <= index)
 	{
 		printf("\nInvalid index value\n");
 		exit(EXIT_FAILURE);
@@ -210,6 +210,134 @@ int valueAt(node *head, int index)
 		itr = itr->next;
 	}
 	return itr->data;
+}
+
+void insert(node **head, int index, int value)
+{
+	if(0 > index || size(*head) <= index)
+	{
+		printf("\nInvalid index value\n");
+		exit(EXIT_FAILURE);	
+	}
+
+	if(0 == index)
+	{
+		push_front(head, value);
+	}
+	else if(size(*head) - 1 == index)
+	{
+		push_back(head, value);
+	}
+	else
+	{
+		int i = 0;
+		node *itr = *head;
+		while( ++i < index)
+		{	
+			itr = itr->next;
+		}
+
+		node *temp = allocate();
+		temp->next = itr->next;
+		itr->next = temp;
+		temp->data = value;
+	}
+}
+
+void erase(node **head, int index)
+{	
+	if(0 > index || size(*head) <= index)
+	{
+		printf("\nInvalid index value\n");
+		exit(EXIT_FAILURE);	
+	}
+
+	if(0 == index)
+	{
+		pop_front(head);
+	}
+	else if(size(*head) - 1 == index)
+	{
+		pop_back(*head);
+	}
+	else
+	{
+		int i = 0;
+		node *itr = *head;
+		while( ++i < index)
+		{	
+			itr = itr->next;
+		}
+
+		node *save = itr->next;
+		itr->next = save->next;
+		free(save);
+	}
+
+}
+
+int value_n_from_end(node *head, int n)
+{
+	if(isEmpty(head))
+	{
+		printf("\nList is empty\n");
+		exit(EXIT_FAILURE);
+	}
+	int size_of_list = size(head);
+
+	if(0 > n || size_of_list <= n)
+	{
+		printf("\nInvalid Index\n");
+		exit(EXIT_FAILURE);
+	}
+	if(0 == n)
+		return valueAt(head, size_of_list - 1);
+	else if(size_of_list - 1 == n)
+		return valueAt(head, 0);
+	else
+	{
+		int i = 0;
+		node *frontPtr = head;
+		while( i++ < n)
+		{	
+			frontPtr = frontPtr->next;
+		}
+		node *backPtr = head;
+		while(NULL != frontPtr->next)
+		{
+			backPtr = backPtr->next;
+			frontPtr = frontPtr->next;
+		}
+		return backPtr->data;
+	}
+}
+
+void reverse(node **head)
+{
+	if(isEmpty(*head))
+	{
+		printf("\nList is empty\n");
+		exit(EXIT_FAILURE);
+	}
+	if(NULL == (*head)->next)
+		return;
+	else
+	{
+		node *curr = *head;
+		node *mid = curr->next;
+		node *front = mid->next;
+		curr->next = NULL;
+
+		while(NULL != front)
+		{
+			mid->next = curr;
+			curr = mid;
+			mid = front;
+			front = front->next;
+		}
+		mid->next = curr;
+		*head = mid;		
+	}
 }
 
 int main(void)
@@ -237,10 +365,24 @@ int main(void)
 	printList(head);
 	assert(size(head) == 4);
 
+	insert(&head,3, 77);
+	printList(head);
+	assert(size(head) == 5);
 
-	// assert(pop_front(&head) == 10);
+	// erase(&head,1);
 	// printList(head);
-	// assert(size(head) == 3);
+	// assert(size(head) == 4);
+
+	//assert(value_n_from_end(head, 0) == 77);
+	//assert(value_n_from_end(head, 3) == 10);
+	//assert(value_n_from_end(head, 1) == -350);
+	//assert(value_n_from_end(head, 5) == 30);
+	//assert(value_n_from_end(head, 3) == 10);
+	//assert(value_n_from_end(head, 4) == 12);
+	// assert(pop_front(&head) == 10);
+
+	reverse(&head);
+	printList(head);
 
 	// assert(pop_front(&head) == -20);
 	// printList(head);
