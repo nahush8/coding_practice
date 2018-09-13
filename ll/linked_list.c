@@ -347,15 +347,27 @@ void remove_value(node **head, int value)
 		exit(EXIT_FAILURE);
 	}
 	if(value == (*head)->data)
+	{
 		pop_front(head);
-	node *itr = *head;
+		return;
+	}
+	node *itr= goToEnd(*head);
+	if(value == itr->data)
+	{
+		pop_back(*head);
+		return;
+	}
+
+	itr = *head;
 	while(itr->next != NULL)
 	{
-		itr->next;
-		if(value == itr->data)
+		if(value == itr->next->data)
 		{
-
+			node *temp = itr->next;
+			itr->next = temp->next;
+			free(temp);
 		}
+		itr = itr->next;
 	}
 }
 
@@ -404,6 +416,8 @@ int main(void)
 	// assert(pop_front(&head) == 10);
 
 	reverse(&head);
+	printList(head);
+	remove_value(&head, 10);
 	printList(head);
 	//remove_value(&head, -350);
 	// assert(pop_front(&head) == -20);
