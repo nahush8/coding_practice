@@ -371,6 +371,27 @@ void remove_value(node **head, int value)
 	}
 }
 
+
+void print_middle(node *head)
+{
+	node *slow_ptr = head, *fast_ptr = head;
+
+	if(isEmpty(head))
+	{
+		printf("\nList is empty\n");
+		exit(EXIT_FAILURE);
+	}
+
+	while((NULL != fast_ptr) && (NULL != fast_ptr->next))
+	{
+		fast_ptr = fast_ptr->next->next;
+		slow_ptr = slow_ptr->next;
+	}
+
+	printf("\nMiddle element is: %d\n", slow_ptr->data);
+}
+
+
 int main(void)
 {
 	node *head = NULL;
@@ -417,8 +438,10 @@ int main(void)
 
 	reverse(&head);
 	printList(head);
-	remove_value(&head, 10);
-	printList(head);
+	//remove_value(&head, 10);
+	//printList(head);
+
+	print_middle(head);
 	//remove_value(&head, -350);
 	// assert(pop_front(&head) == -20);
 	// printList(head);
