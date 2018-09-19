@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include<assert.h>
-#define MAX_QUEUE_SIZE 1000
+#define MAX_QUEUE_SIZE 10
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 /**
@@ -12,7 +12,7 @@
  DONE print_values // prints the values in the tree, from min to max
  delete_tree
  DONE is_in_tree // returns true if given value exists in the tree
- get_height // returns the height in nodes (single node's height is 1)
+ DONE get_height // returns the height in nodes (single node's height is 1)
  DONE get_min // returns the minimum value stored in the tree
  DONE get_max // returns the maximum value stored in the tree
  is_binary_search_tree
@@ -27,6 +27,14 @@ typedef struct TreeNode
 	struct TreeNode* left;
 	struct TreeNode* right;
 }node;
+
+
+typedef struct queue
+{
+	int front, rear, size;
+	int cap;
+	node **arr;
+}queue;
 
 node* newNode(int value)
 {
@@ -70,38 +78,75 @@ void postorder(node *root)
 	printf("%d\t",root->data);
 }
 
-node** createQueue(){
- 	node **queue = (node**)malloc(sizeof(node*) * MAX_QUEUE_SIZE);
- 	return queue;
+queue* createQueue(int cap){
+	queue *q = (queue*) malloc(sizeof(queue));
+	if(!q)
+	{
+		printf("\nUnable to allocate memory\n");
+		exit(EXIT_FAILURE);
+	}
+	q->front = 0;
+	q->rear = cap-1;
+	q->cap = cap;
+	q->size = 0;
+ 	q->arr = (node**)malloc(sizeof(node*) * cap);
+ 	return q;
+}
+
+bool isFull(queue *q)
+{
+	return (q->size == q->cap);
+}
+
+bool isEmpty(queue *q)
+{
+	return (0 == q->size);
 }
  
-void enQueue(node** queue, int* rear, node* newNode)
+void enQueue(queue *q, node* newNode)
 {
-	queue[*rear] = newNode;
-	(*rear)++;	
+	if(!isFull(q))
+	{
+		q->arr[++q->rear % q->cap] = newNode;
+		q->size++;
+	}
+	else
+	{
+		printf("\nQueue is full. Cannot enqueue. Dequeue something first.\n");
+		return;
+	}
 
 }
 
-node* deQueue(node** queue, int* front)
+node* deQueue(queue *q)
 {
-	return queue[(*front)++];
+	if(!isEmpty(q))
+	{
+		q->size--;
+		return q->arr[q->front++ % q->cap];
+	}
+	else
+	{
+		//printf("\nQueue is Empty. Cannot Dequeue. \n");
+		return NULL;
+	}
  
 }
 
 void levelTraverse(node* root)
 {
 	int rear=0 , front=0;
-	node** queue = createQueue();
+	queue *q = createQueue(MAX_QUEUE_SIZE);
 	node* temp = root;
 
 	while(temp)
 	{
 		printf("%d\t",temp->data);
 		if(temp->left)
-			enQueue(queue, &rear, temp->left);
+			enQueue(q, temp->left);
 		if(temp->right)
-			enQueue(queue, &rear, temp->right);
-		temp = deQueue(queue, &front);
+			enQueue(q, temp->right);
+		temp = deQueue(q);
 	}
 
 }
@@ -218,6 +263,7 @@ int main()
 
 	node* root = NULL;
 	int value[] = {4,7,1,12,45,6, -5, 0, 274, 34836, -99};
+	//int value[] = {4,7,1,12};
 	int i;
 	for(i = 0 ; i < sizeof(value)/sizeof(value[0]) ; i++)
 		insert(&root, value[i]);
@@ -235,5 +281,6 @@ int main()
 	printf("\nNode count: %d\n", get_node_count(root));
 	printf("\nHeight of Tree: %d\n", get_height(root));
 	printf("\n");
+	levelTraverse(root);
 	return 0;
 }
