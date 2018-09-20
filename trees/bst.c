@@ -1,4 +1,4 @@
-#include<stdio.h>
+ #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
 #include<assert.h>
@@ -16,7 +16,7 @@
  DONE get_min // returns the minimum value stored in the tree
  DONE get_max // returns the maximum value stored in the tree
  is_binary_search_tree
- delete_value
+ DONE delete_value
  get_successor // returns next-highest value in tree after given value, -1 if none
 
 */
@@ -189,7 +189,7 @@ bool is_in_tree(node *root, int value)
 	}
 }
 
-int findMin(node *root)
+node* findMin(node *root)
 {
 	if(NULL == root)
 	{
@@ -202,7 +202,7 @@ int findMin(node *root)
 		{
 			root = root->left;
 		}
-		return root->data;
+		return root;
 	}
 
 }
@@ -258,12 +258,61 @@ int get_height(node *root)
 	return MAX(get_height(root->left), get_height(root->right)) + 1;
 }
 
+
+void delete(node **rootRef, int value)
+{
+	if(NULL == *rootRef)
+	{
+		printf("\nEmpty tree\n");
+		exit(0);
+	}
+	else if(value < (*rootRef)->data)
+	{
+		delete(&((*rootRef)->left), value);
+	}
+	else if(value > (*rootRef)->data)
+	{
+		delete(&((*rootRef)->right), value);
+	}
+	else
+	{
+		//case 1: No child
+		if(NULL == (*rootRef)->left && NULL == (*rootRef)->right)
+		{
+			free(*rootRef);
+			*rootRef = NULL; 
+		}
+		//case 2: One child on the right
+		else if(NULL == (*rootRef)->left)
+		{
+			node *temp = *rootRef;
+			*rootRef = (*rootRef)->right;
+			free(temp);
+		}
+		//case 2 : One child on the left
+		else if(NULL == (*rootRef)->right)
+		{
+			node *temp = *rootRef;
+			*rootRef = (*rootRef)->left;
+			free(temp);
+		}
+		//Case 3: 2 Children.
+		else
+		{
+			node *temp = findMin((*rootRef)->right);
+			(*rootRef)->data = temp->data;
+			delete(&((*rootRef)->right), temp->data);
+		}	
+
+	}
+}
+
 int main()
 {
 
 	node* root = NULL;
-	int value[] = {4,7,1,12,45,6, -5, 0, 274, 34836, -99};
-	//int value[] = {4,7,1,12};
+	//int value[] = {4,7,1,12,45,6, -5, 0, 274, 34836, -99};
+	int value[] = {4,7,1,12, -5, -2, 2};
 	int i;
 	for(i = 0 ; i < sizeof(value)/sizeof(value[0]) ; i++)
 		insert(&root, value[i]);
@@ -276,11 +325,16 @@ int main()
 	//levelTraverse(root);
 	assert(is_in_tree(root, 7) == true);
 	assert(is_in_tree(root, 77) == false);
-	printf("\nMin value: %d\n", findMin(root));
+	node *min = findMin(root);
+	printf("\nMin value: %d\n", min->data);
 	printf("\nMax value: %d\n", findMax(root));
 	printf("\nNode count: %d\n", get_node_count(root));
 	printf("\nHeight of Tree: %d\n", get_height(root));
 	printf("\n");
 	levelTraverse(root);
+	delete(&root,4);
+	printf("\n");
+	levelTraverse(root);
+		printf("\n");
 	return 0;
 }
