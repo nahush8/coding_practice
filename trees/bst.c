@@ -1,7 +1,8 @@
- #include<stdio.h>
+#include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
 #include<assert.h>
+#include<limits.h>
 #define MAX_QUEUE_SIZE 10
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -207,6 +208,24 @@ node* findMin(node *root)
 
 }
 
+int findMinVal(node *root)
+{
+	if(NULL == root)
+	{
+		printf("\nEmpty tree.\n");
+		exit(0);
+	}
+	else
+	{
+		while(root->left)
+		{
+			root = root->left;
+		}
+		return root->data;
+	}
+
+}
+
 int findMax(node *root)
 {
 	if(NULL == root)
@@ -307,6 +326,94 @@ void delete(node **rootRef, int value)
 	}
 }
 
+
+bool isBSTNaive(node *root)
+{
+	if(NULL == root)
+	{
+		return true;
+	}
+
+	if((NULL != root->left) && (findMax(root->left) > root->data))
+	{
+		return false;
+	}
+	
+	if((NULL != root->right) && (findMinVal(root->right) < root->data))
+	{
+		return false;
+	}	
+	if(!(isBSTNaive(root->left)) || !isBSTNaive(root->right))
+	{
+		return false;
+	}
+	return true;
+}
+
+// Recursively check the values tightening the min/max bounds
+bool isBSTUtil(node *root, int min, int max)
+{
+	if(NULL == root)
+	{
+		return true;
+	}
+	if(root->data < min || root->data > max)
+	{
+		return false;
+	}
+	return (isBSTUtil(root->left, min, root->data - 1) && isBSTUtil(root->right, root->data+1, max));
+}
+
+bool isBST(node *root)
+{
+	return isBSTUtil(root, INT_MIN, INT_MAX);    //Helper function. See description.
+}
+
+// Get the next highest value after a given valur
+// Inorder successor.
+// If right subtree is not null of the given node, then the succsessor is min value of node->right subtree. 
+// If right subtree is null, start from root, and save the successor in each case
+int get_successor(node *root, node *n)
+{
+	if(NULL == root || NULL == n)
+	{
+		printf("\n Invalid node. Exiting..\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		if(NULL != n->right)
+		{
+			return findMinVal(n->right);
+		}
+		else
+		{
+			node *succ = NULL;
+			while(root)
+			{
+				if(n->data < root->data)
+				{
+					succ = root;
+					root=root->left;
+				}
+				else if(n->data > root->data)
+				{
+					root = root->right;
+				}
+				else
+					break;
+			}
+			if(succ)
+				return succ->data;
+			else
+			{
+				printf("\nNode possibly doesn't exist\n");
+			}
+		}
+	}
+
+}
+
 int main()
 {
 
@@ -332,9 +439,14 @@ int main()
 	printf("\nHeight of Tree: %d\n", get_height(root));
 	printf("\n");
 	levelTraverse(root);
-	delete(&root,4);
+	//delete(&root,4);
 	printf("\n");
 	levelTraverse(root);
 		printf("\n");
+	assert(isBSTNaive(root) == true);
+	assert(isBST(root) == true);
+	//root->right->data = 1;
+	assert(root->data == 4);
+	assert(get_successor(root, root->left->right) == 4);	
 	return 0;
 }
