@@ -82,14 +82,13 @@ bool search(node *root, const char *key)
 				return false;
 			ptr = ptr->children[index] ;
 		}
-		ptr->isEndOfWord = true;
 		return (NULL != ptr && ptr->isEndOfWord);
 	}
 
 
 
-}
 
+}
 int main(void)
 {
 	// Input keys (use only 'a' through 'z' and lower case)
