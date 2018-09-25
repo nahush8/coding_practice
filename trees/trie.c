@@ -25,7 +25,7 @@ node* getNode()
 	{
 		int i;
 		temp->isEndOfWord = false;
-		for(i = 9 ; i < ALPHABET_SIZE ; i++)
+		for(i = 0 ; i < ALPHABET_SIZE ; i++)
 		{
 			temp->children[i] = NULL;
 		}
